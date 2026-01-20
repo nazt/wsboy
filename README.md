@@ -1,6 +1,10 @@
-# Oracle Skills สำหรับ Artist
+# Oracle Skills Documentation
 
-บทความภาษาไทยสำหรับคนที่ไม่ถนัดโปรแกรม อยากใช้ Oracle Skills กับ Claude Code
+บทความภาษาไทยสำหรับ **Artist** และ **Developer** ที่อยากใช้ Oracle Skills กับ Claude Code
+
+> 📚 **Artist?** → เลื่อนไปดู [บทความสำหรับ Artist](#บทความสำหรับ-artist)
+>
+> 💻 **Developer?** → เลื่อนไปดู [Developer Deep Dive](#developer-deep-dive)
 
 ## เริ่มต้นใช้งาน
 
@@ -11,7 +15,7 @@ bunx --bun oracle-skills@github:Soul-Brews-Studio/oracle-skills-cli#v1.4.0 insta
 
 ---
 
-## บทความทั้งหมด
+## บทความสำหรับ Artist
 
 ### แนะนำ
 | # | บทความ | เนื้อหา |
@@ -85,11 +89,83 @@ bunx --bun oracle-skills@github:Soul-Brews-Studio/oracle-skills-cli#v1.4.0 insta
 
 ---
 
-## Links
+## Developer Deep Dive
 
-- [Oracle Skills CLI](https://github.com/Soul-Brews-Studio/oracle-skills-cli) — ตัวติดตั้ง
-- [Soul Brews Studio](https://github.com/Soul-Brews-Studio) — ผู้สร้าง
+Technical documentation for developers who want to understand the internals.
+
+### Architecture & Internals
+
+| # | Article | Skill | Topics |
+|---|---------|-------|--------|
+| 01 | [Learn Deep Dive](dev-articles/01-learn-deep-dive.md) | `/learn` | 3 parallel agents, output structure, cost analysis |
+| 02 | [Project Architecture](dev-articles/02-project-architecture.md) | `/project` | ghq workflow, symlinks, learn vs incubate |
+| 03 | [Trace & Oracle](dev-articles/03-trace-oracle-integration.md) | `/trace` | Oracle MCP, --deep mode, distillation |
+| 04 | [Context-Finder Agents](dev-articles/04-context-finder-agents.md) | `/context-finder` | 5 parallel agents, search strategies |
+| 05 | [Skill Creator Guide](dev-articles/05-skill-creator-guide.md) | `/skill-creator` | Bun Shell, skill anatomy, Oracle philosophy |
+
+### Key Concepts
+
+| Concept | Description |
+|---------|-------------|
+| **Parallel Agents** | Multiple Haiku agents run simultaneously for speed |
+| **Oracle MCP** | Knowledge base with `oracle_search`, `oracle_learn`, `oracle_trace` |
+| **ghq Integration** | All repos managed via ghq, symlinked to ψ/ |
+| **Bun Shell** | Cross-platform scripting with `$` template literals |
+
+### Architecture Overview
+
+```
+┌─────────────────────────────────────────────────────┐
+│                   Claude Code                        │
+│                                                      │
+│  Skills (/.claude/skills/)                          │
+│  ├── skill.md      → Instructions                   │
+│  └── scripts/*.ts  → Bun Shell logic                │
+│                                                      │
+└──────────────────────┬──────────────────────────────┘
+                       │
+        ┌──────────────┼──────────────┐
+        │              │              │
+        ▼              ▼              ▼
+   ┌─────────┐   ┌─────────┐   ┌─────────┐
+   │ Oracle  │   │  ghq    │   │ GitHub  │
+   │  MCP    │   │ (repos) │   │   API   │
+   └─────────┘   └─────────┘   └─────────┘
+        │              │              │
+        ▼              ▼              ▼
+   ┌─────────────────────────────────────────┐
+   │              ψ/ Directory                │
+   │  ├── memory/     (Oracle knowledge)     │
+   │  ├── learn/      (study repos)          │
+   │  ├── incubate/   (dev repos)            │
+   │  └── inbox/      (handoffs, schedules)  │
+   └─────────────────────────────────────────┘
+```
+
+### Quick Reference
+
+```bash
+# Explore codebase (3 agents)
+/learn https://github.com/owner/repo
+
+# Deep search (5 agents)
+/trace query --deep
+
+# Log to Oracle
+oracle_learn({ pattern: "...", concepts: [...] })
+
+# Create custom skill
+/skill-creator my-skill
+```
 
 ---
 
-*สร้างโดย Claude Opus 4.5 สำหรับเพื่อน Artist ที่อยากใช้ AI ช่วยงาน*
+## Links
+
+- [Oracle Skills CLI](https://github.com/Soul-Brews-Studio/oracle-skills-cli) — Installer
+- [Soul Brews Studio](https://github.com/Soul-Brews-Studio) — Creator
+- [Agent Skills Spec](https://agentskills.io) — Cross-agent skill format
+
+---
+
+*Created by Claude Opus 4.5 for Artists and Developers*
